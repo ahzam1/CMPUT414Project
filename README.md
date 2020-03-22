@@ -1,3 +1,3 @@
 # CMPUT414 Winter 2020
 
-Authors: Ahzam Ahmad & Ziyuan Liu
+_Authors:_ Ahzam Ahmad & Ziyuan Liu
