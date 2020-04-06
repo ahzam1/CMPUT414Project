@@ -1,5 +1,6 @@
 import cv2
 import imutils
+import numpy
 from math import cos, sin, radians
 # Load the cascade
 face_cascade = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
@@ -49,32 +50,47 @@ while True:
     # cv2.imshow('facedetect', img)
     
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    faces = face_cascade.detectMultiScale(gray, 1.1, 4)
+    faces = face_cascade.detectMultiScale(gray, 1.3, 4)
     if isinstance(faces,tuple):
         #try rotating and attempting to find face here.
-        rotl = rotate_image(img, -20)
-        rotr = rotate_image(img, 20)
+        rotl = rotate_image(img, -45)
+        rotr = rotate_image(img, 45)
         grayR = cv2.cvtColor(rotr, cv2.COLOR_BGR2GRAY)
         grayL = cv2.cvtColor(rotl, cv2.COLOR_BGR2GRAY)
-        facesr = face_cascade.detectMultiScale(grayR, 1.1, 4)
-        facesl = face_cascade.detectMultiScale(grayL, 1.1, 4)
+        facesr = face_cascade.detectMultiScale(grayR, 1.3, 4)
+        facesl = face_cascade.detectMultiScale(grayL, 1.3, 4)
    
     finalFaces = []
     for (x, y, w, h) in faces:
         cv2.rectangle(img, (x, y), (x+w, y+h), (255, 0, 0), 2)
         finalFaces.append(img[y:y+h, x:x+w])
     if 'facesl' in locals():
+        for a in facesl:
+            a = [rotate_point(a, img, -45)]
         for (x, y, w, h) in facesl:
             cv2.rectangle(img, (x, y), (x+w, y+h), (255, 0, 0), 2)
             finalFaces.append(img[y:y+h, x:x+w])
         del facesl
     if 'facesr' in locals():
+        for a in facesr:
+            a = [rotate_point(a, img, 45)]
         for (x, y, w, h) in facesr:
             cv2.rectangle(img, (x, y), (x+w, y+h), (255, 0, 0), 2)
             finalFaces.append(img[y:y+h, x:x+w])
         del facesr # to ensure it doesn't store old ones.
-        
-    cv2.imshow('img', img)
+    for face in finalFaces:
+        # face within face, if any found
+        grayf =cv2.cvtColor(face, cv2.COLOR_BGR2GRAY)
+        avg_color_per_row = numpy.average(grayf, axis=0)
+        avg_color = numpy.average(avg_color_per_row, axis=0)
+
+        for i in range(len(avg_color_per_row)):
+            if abs(avg_color-avg_color_per_row[i])<10:
+                cv2.line(grayf, (0, i), (grayf.shape[1], i), (0,255,0), 2)
+                searchBelow = i
+                break
+        cv2.imshow('img',grayf)
+    # cv2.imshow('img', img)
     # Stop if escape key is pressed
     k = cv2.waitKey(30) & 0xff
     if k==27:
