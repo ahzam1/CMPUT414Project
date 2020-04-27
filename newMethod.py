@@ -24,14 +24,18 @@ predictor = dlib.shape_predictor('shape_predictor_68_face_landmarks.dat')
 # 48-59 is outer lip trace
 # 60-67 is inner lip trace
 ####
+f = open("extractions.txt", "w")
 
+count =0 
 while True:
+	f.write("\nframe:" + str(count))
+	count +=1
     # Read the frame
 	_, img = cap.read()
 	#set a fixed size
-	image = imutils.resize(img, width=500)
+	# image = imutils.resize(img, width=500)
 	#grayscale convert
-	gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+	gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 	#use dlib face detector
 	rects = detector(gray, 0)
     # loop over the face detections
@@ -39,7 +43,7 @@ while True:
 		# abstracted from https://www.pyimagesearch.com/2017/04/10/detect-eyes-nose-lips-jaw-dlib-opencv-python/
 		shape = predictor(gray, rect)
 		shape = face_utils.shape_to_np(shape)
-		drawn = image.copy()
+		drawn = img.copy()
 		# loop over the face parts individually
 		for (name, (i, j)) in face_utils.FACIAL_LANDMARKS_IDXS.items():
 			# clone the original image, iterate over landmarks, and draw dots on their x,y position
@@ -48,6 +52,8 @@ while True:
 
 		# show the drawn on image
 		cv2.imshow("Image", drawn)
+		f.write(np.array2string(shape))
+
     # Stop if escape key is pressed
 	k = cv2.waitKey(30) & 0xff
 	if k==27:
@@ -55,4 +61,5 @@ while True:
 
 # Release the VideoCapture object
 cap.release()
+f.close()
 
