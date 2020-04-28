@@ -3,8 +3,11 @@ from imutils import face_utils
 import imutils
 import dlib
 import numpy as np
-import operator
+from datetime import datetime
 from math import cos, sin, radians
+
+# To capture video from webcam. 
+#cap = cv2.VideoCapture(0)
 # To use a video file as input 
 cap = cv2.VideoCapture('test.mp4')
 
@@ -23,8 +26,11 @@ predictor = dlib.shape_predictor('shape_predictor_68_face_landmarks.dat')
 # 60-67 is inner lip trace
 ####
 f = open("extractions.txt", "w")
-
-while True:
+startTime = datetime.now()
+count =0 
+for i in range(941):
+	f.write(str(count))
+	count +=1
     # Read the frame
 	_, img = cap.read()
 	#set a fixed size
@@ -43,14 +49,15 @@ while True:
 		for (name, (i, j)) in face_utils.FACIAL_LANDMARKS_IDXS.items():
 			# clone the original image, iterate over landmarks, and draw dots on their x,y position
 			for (x, y) in shape[i:j]:
-				cv2.circle(drawn, (x, y), 2, (0, 0, 255), -1)
+				pass
+				#cv2.circle(drawn, (x, y), 2, (0, 0, 255), -1)
 
 		# show the drawn on image
-		cv2.imshow("Image", drawn)
+		#cv2.imshow("Image", drawn)
 		n = list(tuple(row) for row in shape)
 		for e in n:
 			f.write(str(e)[:-1] + ",0)")
-	f.write("\n")
+		f.write("\n")
 		
 
     # Stop if escape key is pressed
@@ -61,3 +68,4 @@ while True:
 # Release the VideoCapture object
 cap.release()
 f.close()
+print(datetime.now() - startTime)
