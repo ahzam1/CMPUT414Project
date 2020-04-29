@@ -1,0 +1,7 @@
+Dlib HoG Detection: takes 2:07.401798 minutes
+Obama test: 941/941 detections, all points detected
+Generic image test: all detected
+
+Haar detection: takes 1:43.332129 minutes
+Obama test: 941/941 face detections (one double detection of same face), 807/941 misidentified eyes (too many/too little)
+generic image test: all detected
